@@ -1,4 +1,7 @@
 {
+  "name": "phizzl/querygenerate",
+  "version": "0.0.1",
+  "dist": {},
   "autoload": {
     "psr-4": {"Phizzl\\QueryGenerate\\": "src/"}
   }
