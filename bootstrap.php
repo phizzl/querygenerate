@@ -15,6 +15,7 @@ $factory->setDriver($driver);
 $generator = new QueryGenerator($factory);
 var_dump($generator
     ->table('test', array('engine' => 'InnoDB', 'collation' => 'utf8_general_ci'))
+    ->setIsCreated(true)
     ->addColumn('OXID', 'char', array('length' => 32, 'collation' => 'latin1_general_ci'))
     ->addColumn('test', 'int', array('length' => 11, 'autoincrement' => true))
     ->addIndex(array('test'))

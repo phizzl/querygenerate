@@ -60,6 +60,14 @@ interface TableInterface extends GeneratableInterface
     public function changeColumn($name, $type, array $options = array());
 
     /**
+     * Removes a column from a table
+     *
+     * @param $name
+     * @return mixed
+     */
+    public function removeColumn($name);
+
+    /**
      * Gets the added columns
      *
      * @return array|\Iterator
@@ -72,6 +80,13 @@ interface TableInterface extends GeneratableInterface
      * @return array|\Iterator
      */
     public function getChangedColumns();
+
+    /**
+     * Gets the removed columns
+     *
+     * @return array|\Iterator
+     */
+    public function getRemovedColumns();
 
     /**
      * Adds an index to the table

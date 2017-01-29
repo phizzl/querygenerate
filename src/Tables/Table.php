@@ -30,6 +30,11 @@ class Table implements TableInterface
     private $changeColumns;
 
     /**
+     * @var array
+     */
+    private $removedColumns;
+
+    /**
      * @var bool
      */
     private $isCreated;
@@ -68,7 +73,8 @@ class Table implements TableInterface
         $this->name = "";
         $this->addColumns = array();
         $this->changeColumns = array();
-        $this->isCreated = true;
+        $this->removedColumns = array();
+        $this->isCreated = false;
         $this->addedIndexes = array();
         $this->removedIndexes = array();
         $this->options = array();
@@ -117,6 +123,11 @@ class Table implements TableInterface
         return $this;
     }
 
+    public function removeColumn($name){
+        $this->removedColumns[] = $name;
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -131,6 +142,12 @@ class Table implements TableInterface
         return $this->changeColumns;
     }
 
+    /**
+     * @return array
+     */
+    public function getRemovedColumns(){
+        return $this->removedColumns;
+    }
 
     /**
      * @inheritdoc

@@ -68,12 +68,135 @@ class MysqlDriver implements DriverInterface
      * @inheritdoc
      */
     public function generateTable(TableInterface $table){
-        if($table->getIsCreated()){
+        if(!$table->getIsCreated()){
             return $this->createTable($table);
         }
-        return "Cordell";
+
+        return $this->changeTable($table);
     }
 
+    /**
+     * @param TableInterface $table
+     * @return string
+     */
+    private function changeTable(TableInterface $table){
+        $queries = array();
+        $removedIndexStatements = $this->getRemoveIndexesStatements($table);
+        $addedIndexStatements = $this->getAddedIndexesStatements($table);
+        $changedColumnStatements = $this->getChangedColumnStatements($table);
+        $addedColumnStatements = $this->getAddedColumnStatements($table);
+        $removedColumnStatements = $this->getRemovedColumnStatements($table);
+
+        $baseQuery = "ALTER TABLE " . $this->queryEscape->escapeFieldName($table->getName()) . "\n";
+
+        if(count($removedIndexStatements)){
+            $queries[] = $baseQuery . implode(",\n", $removedIndexStatements);
+        }
+
+        if(count($removedColumnStatements)){
+            $queries[] = $baseQuery . implode(",\n", $removedColumnStatements);
+        }
+
+        if(count($changedColumnStatements)){
+            $queries[] = $baseQuery . implode(",\n", $changedColumnStatements);
+        }
+
+        if(count($addedColumnStatements)){
+            $queries[] = $baseQuery . implode(",\n", $addedColumnStatements);
+        }
+
+        if(count($addedIndexStatements)){
+            $queries[] = $baseQuery . implode(",\n", $addedIndexStatements);
+        }
+
+        if(count($table->getPrimaryKey())){
+            $queries[] = $baseQuery . "ADD PRIMARY KEY (" . $this->queryEscape->escapeFieldName($table->getPrimaryKey()) . ")";
+        }
+
+        return implode(";\n", $queries) . ";";
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return array
+     */
+    private function getRemovedColumnStatements(TableInterface $table){
+        $statements = array();
+        /* @var ColumnInterface $column */
+        foreach($table->getRemovedColumns() as $columnName){
+            $statements[] = "DROP COLUMN " . $this->queryEscape->escapeFieldName($columnName);
+        }
+
+        return $statements;
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return array
+     */
+    private function getAddedColumnStatements(TableInterface $table){
+        $statements = array();
+        /* @var ColumnInterface $column */
+        foreach($table->getAddedColumns() as $column){
+            $columnOptions = $column->getOptions();
+            $name = $column->getName();
+
+            $statements[] = "ADD COLUMN " . $this->queryEscape->escapeFieldName($name) . " " . $column->generate();
+        }
+
+        return $statements;
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return array
+     */
+    private function getChangedColumnStatements(TableInterface $table){
+        $statements = array();
+        /* @var ColumnInterface $column */
+        foreach($table->getChangedColumns() as $column){
+            $columnOptions = $column->getOptions();
+            $name = $column->getName();
+            $newName = isset($columnOptions['rename']) ? $columnOptions['rename'] : $name;
+
+            $statements[] = "CHANGE COLUMN " . $this->queryEscape->escapeFieldName($name) . " "
+                . $this->queryEscape->escapeFieldName($newName) . " " . $column->generate();
+        }
+
+        return $statements;
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return array
+     */
+    private function getAddedIndexesStatements(TableInterface $table){
+        $statements = array();
+        foreach($table->getAddedIndexes() as $indexName => $columnNames){
+            $statements[] = "ADD INDEX " . $this->queryEscape->escapeFieldName($indexName)
+                . " (" . $this->queryEscape->escapeFieldName($columnNames) . ")";
+        }
+
+        return $statements;
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return array
+     */
+    private function getRemoveIndexesStatements(TableInterface $table){
+        $statements = array();
+        foreach($table->getRemovedIndexes() as $indexName){
+            $statements[] = "DROP INDEX " . $this->queryEscape->escapeFieldName($indexName);
+        }
+
+        return $statements;
+    }
+
+    /**
+     * @inheritdoc
+     * @throws GeneratorException
+     */
     private function createTable(TableInterface $table){
         $tableOptions = $table->getOptions();
         $columnDefinitions = array();
