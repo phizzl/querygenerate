@@ -65,6 +65,11 @@ class Table implements TableInterface
     private $removePrimaryKey;
 
     /**
+     * @var string
+     */
+    private $rename;
+
+    /**
      * Table constructor.
      * @param FactoryInterface $factory
      */
@@ -80,6 +85,7 @@ class Table implements TableInterface
         $this->options = array();
         $this->primaryKey = array();
         $this->removePrimaryKey = false;
+        $this->rename = "";
     }
 
     /**
@@ -278,4 +284,22 @@ class Table implements TableInterface
     public function isPrimaryKeyRemoved(){
         return $this->removePrimaryKey;
     }
+
+    /**
+     * @inheritdoc
+     * @return $this
+     */
+    public function rename($newName){
+        $this->rename = $newName;
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRename(){
+        return $this->rename;
+    }
+
+
 }

@@ -18,6 +18,7 @@ var_dump($generator
     ->setIsCreated(true)
     ->addColumn('OXID', 'char', array('length' => 32, 'collation' => 'latin1_general_ci'))
     ->addColumn('test', 'int', array('length' => 11, 'autoincrement' => true))
+    ->changeColumn('Spalte 1', 'TINYINT', array('rename' => 'Spalte Spass', 'length' => 1))
     ->addIndex(array('test'))
     ->setPrimaryKey(array('OXID'))
     ->generate());

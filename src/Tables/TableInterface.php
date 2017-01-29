@@ -157,4 +157,19 @@ interface TableInterface extends GeneratableInterface
      * @return bool
      */
     public function isPrimaryKeyRemoved();
+
+    /**
+     * Rename the table
+     *
+     * @param $newName
+     * @return mixed
+     */
+    public function rename($newName);
+
+    /**
+     * Gets the new table name
+     *
+     * @return mixed
+     */
+    public function getRename();
 }

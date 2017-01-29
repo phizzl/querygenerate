@@ -81,6 +81,7 @@ class MysqlDriver implements DriverInterface
      */
     private function changeTable(TableInterface $table){
         $queries = array();
+        $tableOptions = $table->getOptions();
         $removedIndexStatements = $this->getRemoveIndexesStatements($table);
         $addedIndexStatements = $this->getAddedIndexesStatements($table);
         $changedColumnStatements = $this->getChangedColumnStatements($table);
@@ -88,6 +89,10 @@ class MysqlDriver implements DriverInterface
         $removedColumnStatements = $this->getRemovedColumnStatements($table);
 
         $baseQuery = "ALTER TABLE " . $this->queryEscape->escapeFieldName($table->getName()) . "\n";
+
+        if(isset($tableOptions['engine'])){
+            $queries[] = $baseQuery . "ENGINE={$tableOptions['engine']}";
+        }
 
         if(count($removedIndexStatements)){
             $queries[] = $baseQuery . implode(",\n", $removedIndexStatements);
@@ -109,8 +114,17 @@ class MysqlDriver implements DriverInterface
             $queries[] = $baseQuery . implode(",\n", $addedIndexStatements);
         }
 
+        if($table->isPrimaryKeyRemoved()){
+            $queries[] = $baseQuery . "REMOVE PRIMARY KEY";
+        }
+
         if(count($table->getPrimaryKey())){
             $queries[] = $baseQuery . "ADD PRIMARY KEY (" . $this->queryEscape->escapeFieldName($table->getPrimaryKey()) . ")";
+        }
+
+        if($table->getRename()){
+            $queries[] = "RENAME " . $this->queryEscape->escapeFieldName($table->getName())
+                . " TO " . $this->queryEscape->escapeFieldName($table->getRename());
         }
 
         return implode(";\n", $queries) . ";";
@@ -159,8 +173,7 @@ class MysqlDriver implements DriverInterface
             $name = $column->getName();
             $newName = isset($columnOptions['rename']) ? $columnOptions['rename'] : $name;
 
-            $statements[] = "CHANGE COLUMN " . $this->queryEscape->escapeFieldName($name) . " "
-                . $this->queryEscape->escapeFieldName($newName) . " " . $column->generate();
+            $statements[] = "CHANGE COLUMN " . $this->queryEscape->escapeFieldName($name) . " " . $column->generate();
         }
 
         return $statements;
@@ -311,7 +324,7 @@ class MysqlDriver implements DriverInterface
             throw new GeneratorException("The type \"{$type}\" needs values to be defined (column \"{$name}\")");
         }
 
-        $str = $this->queryEscape->escapeFieldName($name) . " {$type}";
+        $str = $this->queryEscape->escapeFieldName(isset($options['rename']) ? $options['rename'] : $name) . " {$type}";
         $str .= isset($options['length']) ? "({$options['length']})" : "";
         $str .= isset($options['values']) ? $this->generateValues($options['values']) : "";
         $str .= isset($options['signed']) && $options['signed'] === false ? " UNSIGNED" : "";
