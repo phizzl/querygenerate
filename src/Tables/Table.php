@@ -70,6 +70,11 @@ class Table implements TableInterface
     private $rename;
 
     /**
+     * @var array
+     */
+    private $insertData;
+
+    /**
      * Table constructor.
      * @param FactoryInterface $factory
      */
@@ -86,6 +91,7 @@ class Table implements TableInterface
         $this->primaryKey = array();
         $this->removePrimaryKey = false;
         $this->rename = "";
+        $this->insertData = array();
     }
 
     /**
@@ -301,5 +307,19 @@ class Table implements TableInterface
         return $this->rename;
     }
 
+    /**
+     * @param array $data
+     * @return $this
+     */
+    public function addInsertData(array $data){
+        $this->insertData[] = $data;
+        return $this;
+    }
 
+    /**
+     * @return array
+     */
+    public function getInsertData(){
+        return $this->insertData;
+    }
 }

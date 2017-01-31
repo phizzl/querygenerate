@@ -68,11 +68,14 @@ class MysqlDriver implements DriverInterface
      * @inheritdoc
      */
     public function generateTable(TableInterface $table){
-        if(!$table->getIsCreated()){
-            return $this->createTable($table);
+        $tableQueries = $table->getIsCreated() ? $this->changeTable($table) : $this->createTable($table);
+
+
+        if(count($table->getInsertData())){
+            $tableQueries .= "\n" . $this->generateInserts($table);
         }
 
-        return $this->changeTable($table);
+        return $tableQueries;
     }
 
     /**
@@ -261,6 +264,20 @@ class MysqlDriver implements DriverInterface
         $sql .= isset($tableOptions['autoincrement']) ? "AUTO_INCREMENT={$tableOptions['autoincrement']}\n" : "";
 
         return "{$sql};";
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return string
+     */
+    private function generateInserts(TableInterface $table){
+        $queries = array();
+        foreach($table->getInsertData() as $row){
+            $queries[] = "INSERT INTO (" . $this->queryEscape->escapeFieldName(array_keys($row)) . ")\n"
+                . "VALUES (" . $this->queryEscape->escapeValue($row) . ");";
+        }
+
+        return implode("\n", $queries);
     }
 
     /**

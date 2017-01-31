@@ -172,4 +172,19 @@ interface TableInterface extends GeneratableInterface
      * @return mixed
      */
     public function getRename();
+
+    /**
+     * Adds data to insert
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function addInsertData(array $data);
+
+    /**
+     * Gets the data for insertion
+     *
+     * @return array
+     */
+    public function getInsertData();
 }

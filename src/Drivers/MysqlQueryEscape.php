@@ -53,7 +53,7 @@ class MysqlQueryEscape implements QueryEscapeInterface
             $value = $this->escapeValue($value);
         }
 
-        return "(" . implode(', ', $array) . ")";
+        return implode(', ', $array);
     }
 
     /**
