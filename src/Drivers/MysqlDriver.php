@@ -168,9 +168,7 @@ class MysqlDriver implements DriverInterface
         $statements = array();
         /* @var ColumnInterface $column */
         foreach($table->getChangedColumns() as $column){
-            $columnOptions = $column->getOptions();
             $name = $column->getName();
-            $newName = isset($columnOptions['rename']) ? $columnOptions['rename'] : $name;
 
             $statements[] = "CHANGE COLUMN " . $this->queryEscape->escapeFieldName($name) . " " . $column->generate();
         }
@@ -361,7 +359,8 @@ class MysqlDriver implements DriverInterface
     public function generateData(TableInterface $table){
         $queries = array();
         foreach($table->getInsertData() as $row){
-            $queries[] = "INSERT INTO (" . $this->queryEscape->escapeFieldName(array_keys($row)) . ")\n"
+            $queries[] = "INSERT INTO " . $this->queryEscape->escapeFieldName($table->getName())
+                . " (" . $this->queryEscape->escapeFieldName(array_keys($row)) . ")\n"
                 . "VALUES (" . $this->queryEscape->escapeValue($row) . ");";
         }
 
