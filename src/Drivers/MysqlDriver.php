@@ -69,11 +69,7 @@ class MysqlDriver implements DriverInterface
      */
     public function generateTable(TableInterface $table){
         $tableQueries = $table->getIsCreated() ? $this->changeTable($table) : $this->createTable($table);
-
-
-        if(count($table->getInsertData())){
-            $tableQueries .= "\n" . $this->insertData($table);
-        }
+        $tableQueries .= "\n" . $this->generateData($table);
 
         return $tableQueries;
     }
@@ -267,20 +263,6 @@ class MysqlDriver implements DriverInterface
     }
 
     /**
-     * @param TableInterface $table
-     * @return string
-     */
-    private function insertData(TableInterface $table){
-        $queries = array();
-        foreach($table->getInsertData() as $row){
-            $queries[] = "INSERT INTO (" . $this->queryEscape->escapeFieldName(array_keys($row)) . ")\n"
-                . "VALUES (" . $this->queryEscape->escapeValue($row) . ");";
-        }
-
-        return implode("\n", $queries);
-    }
-
-    /**
      * Check if a column is marked as index
      *
      * @param TableInterface $table
@@ -370,6 +352,20 @@ class MysqlDriver implements DriverInterface
         }
 
         return $this->queryEscape->escapeValue($values);
+    }
+
+    /**
+     * @param TableInterface $table
+     * @return string
+     */
+    public function generateData(TableInterface $table){
+        $queries = array();
+        foreach($table->getInsertData() as $row){
+            $queries[] = "INSERT INTO (" . $this->queryEscape->escapeFieldName(array_keys($row)) . ")\n"
+                . "VALUES (" . $this->queryEscape->escapeValue($row) . ");";
+        }
+
+        return implode("\n", $queries);
     }
 
 }

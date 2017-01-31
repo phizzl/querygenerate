@@ -187,4 +187,11 @@ interface TableInterface extends GeneratableInterface
      * @return array
      */
     public function getInsertData();
+
+    /**
+     * Generates the insert data
+     *
+     * @return mixed
+     */
+    public function generateData();
 }

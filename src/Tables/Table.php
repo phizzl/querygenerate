@@ -170,6 +170,13 @@ class Table implements TableInterface
 
     /**
      * @inheritdoc
+     */
+    public function generateData(){
+        return $this->factory->getDriver()->generateData($this);
+    }
+
+    /**
+     * @inheritdoc
      * @return $this
      */
     public function setIsCreated($isCreated){
@@ -322,4 +329,6 @@ class Table implements TableInterface
     public function getInsertData(){
         return $this->insertData;
     }
+
+
 }

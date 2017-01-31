@@ -31,4 +31,10 @@ interface DriverInterface
      * @return string
      */
     public function generateColumn(ColumnInterface $column);
+
+    /**
+     * @param TableInterface $table
+     * @return string
+     */
+    public function generateData(TableInterface $table);
 }
