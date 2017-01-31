@@ -72,7 +72,7 @@ class MysqlDriver implements DriverInterface
 
 
         if(count($table->getInsertData())){
-            $tableQueries .= "\n" . $this->generateInserts($table);
+            $tableQueries .= "\n" . $this->insertData($table);
         }
 
         return $tableQueries;
@@ -270,7 +270,7 @@ class MysqlDriver implements DriverInterface
      * @param TableInterface $table
      * @return string
      */
-    private function generateInserts(TableInterface $table){
+    private function insertData(TableInterface $table){
         $queries = array();
         foreach($table->getInsertData() as $row){
             $queries[] = "INSERT INTO (" . $this->queryEscape->escapeFieldName(array_keys($row)) . ")\n"
