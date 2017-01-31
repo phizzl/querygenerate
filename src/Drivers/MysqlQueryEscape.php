@@ -61,7 +61,7 @@ class MysqlQueryEscape implements QueryEscapeInterface
      * @return string
      */
     private function escapeValueString($string){
-        return mysql_escape_string($string);
+        return "'" . mysql_escape_string($string) . "'";
     }
 
     /**
