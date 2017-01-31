@@ -309,12 +309,12 @@ class MysqlDriver implements DriverInterface
             throw new GeneratorException("Length not supported for type \"{$type}\" (column \"{$name}\")");
         }
 
-        if(in_array($type, static::$signable)
+        if(!in_array($type, static::$signable)
             && isset($options['signed'])){
             throw new GeneratorException("The type \"{$type}\" cannot be signed (column \"{$name}\")");
         }
 
-        if(in_array($type, static::$signable)
+        if(!in_array($type, static::$signable)
             && isset($options['zerofill'])){
             throw new GeneratorException("The type \"{$type}\" cannot be zerofilled (column \"{$name}\")");
         }
