@@ -154,7 +154,7 @@ class MysqlDriver implements DriverInterface
             $columnOptions = $column->getOptions();
             $name = $column->getName();
 
-            $statements[] = "ADD COLUMN " . $this->queryEscape->escapeFieldName($name) . " " . $column->generate();
+            $statements[] = "ADD COLUMN " . $column->generate();
         }
 
         return $statements;
@@ -168,9 +168,8 @@ class MysqlDriver implements DriverInterface
         $statements = array();
         /* @var ColumnInterface $column */
         foreach($table->getChangedColumns() as $column){
-            $name = $column->getName();
-
-            $statements[] = "CHANGE COLUMN " . $this->queryEscape->escapeFieldName($name) . " " . $column->generate();
+            $statements[] = "CHANGE COLUMN " . $this->queryEscape->escapeFieldName($column->getName())
+                . " " . $column->generate();
         }
 
         return $statements;
