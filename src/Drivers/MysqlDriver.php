@@ -272,6 +272,11 @@ class MysqlDriver implements DriverInterface
      */
     private function isColumnInIndex(TableInterface $table, ColumnInterface $column){
         $indexes = $table->getAddedIndexes();
+
+        if(in_array($column->getName(), $table->getPrimaryKey())){
+            return true;
+        }
+
         foreach($indexes as $columnNames){
             if(in_array($column->getName(), $columnNames)){
                 return true;
