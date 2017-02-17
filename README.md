@@ -5,6 +5,11 @@ This is a library to generate plain SQL statements by describing the table in PH
 
 Example:
 ```php
+use Phizzl\QueryGenerate\Drivers\MysqlDriver;
+use Phizzl\QueryGenerate\Drivers\MysqlQueryEscape;
+use Phizzl\QueryGenerate\Factory\Factory;
+use Phizzl\QueryGenerate\QueryGenerator;
+
 $loader = require_once __DIR__ . '/vendor/autoload.php';
 
 $driver = new MysqlDriver();
