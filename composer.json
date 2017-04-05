@@ -8,6 +8,7 @@
   "autoload": {
     "psr-4": {"Phizzl\\QueryGenerate\\": "src/"}
   },
+  "licence": "GPL-3.0",
   "authors": [
     {
       "name": "Phillip Schleicher",
