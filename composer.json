@@ -1,10 +1,6 @@
 {
   "name": "phizzl/querygenerate",
-  "version": "0.0.1",
-  "dist": {
-    "url": "https://github.com/phizzl/querygenerate/archive/master.zip",
-    "type": "zip"
-  },
+  "version": "1.0.0",
   "autoload": {
     "psr-4": {"Phizzl\\QueryGenerate\\": "src/"}
   },
